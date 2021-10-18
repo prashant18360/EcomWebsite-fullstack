@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth  import authenticate,  login, logout
 from django.contrib import messages
 from home.utility import *
+from home.models import *
 
 # Create your views here.
 def home(request):
@@ -55,6 +56,8 @@ def signupprocess(request):
                 myuser.is_active = True
                 myuser.save()
 
+                Account.objects.create(user=myuser)
+
                 messages.success(request, "Congrats !! Your Account has been successfully created, Now you can login to your account")
                 return redirect('home')
             else:
@@ -89,3 +92,79 @@ def logoutprocess(request):
     logout(request)
     messages.success(request, "Successfully logged out")
     return redirect('home')
+
+def profile(request, username):
+
+    loggeduser = request.user
+
+    if not loggeduser.is_anonymous and loggeduser.username == username:
+        pass
+    else:
+        return HttpResponse("404 - Page Not found")
+
+    if loggeduser.is_superuser:
+        context = AdminConsole()
+        return render(request, 'home/profile.html', context) 
+
+
+    try:
+        userobj = User.objects.get(username=username)
+        accountobj = Account.objects.filter(user=userobj).first()
+
+        context = profilepageData(accountobj)
+
+        return render(request, 'home/profile.html', context) 
+
+    except User.DoesNotExist:
+        return HttpResponse("404 - Page Not found")
+    
+
+
+def applyforseller(request):
+    if request.method == 'POST':
+        loguser = request.user
+
+        if 'userfile' in request.FILES:
+            document = request.FILES['userfile']
+        else:
+            return HttpResponse("Something went wrong")
+        
+        account = Account.objects.filter(user = loguser).first()
+
+        if ApplyForSeller.objects.filter(account=account).exists():
+            messages.warning(request, "You have already Submitted Application")
+            return redirect('home')
+        else:
+            ApplyForSeller.objects.create(account=account, document=document)
+
+        messages.success(request, "Application Successfully Submitted")
+        return redirect('home')
+    else:
+        return HttpResponse("404 - page not found")
+
+
+def sellerapprove(request):
+    if request.method == 'POST':
+        id = request.POST['id']
+        obj = ApplyForSeller.objects.filter(id=id).first()
+        obj.status = "approved"
+        obj.account.role = "seller"
+        obj.account.save()
+        obj.save()
+
+        messages.success(request, "Seller Application Approved")
+        return redirect('home')
+
+    else:
+        return HttpResponse("404 - page not found")
+
+def sellerreject(request):
+    if request.method == 'POST':
+        id = request.POST['id']
+        obj = ApplyForSeller.objects.filter(id=id).first().delete()
+
+        messages.success(request, "Seller Application Reject")
+        return redirect('home')
+    else:
+        return HttpResponse("404 - page not found")
+

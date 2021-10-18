@@ -1,5 +1,6 @@
 import re
 #from django.contrib.auth.models import User
+from home.models import *
 
 
 def validatepassword(password):
@@ -28,3 +29,19 @@ def validateusername(username):
             return False
     else:
         return True
+
+
+def profilepageData(accountobj):
+    context = {'username' : accountobj.user.username}
+    context['fullname'] = accountobj.user.first_name + " " + accountobj.user.last_name
+    context['email'] = accountobj.user.email
+    context['contact'] = accountobj.contactnum
+    context['address'] = accountobj.address
+
+    return context
+
+
+def AdminConsole():
+    application = ApplyForSeller.objects.filter(status="pending")
+
+    return {"application" : application}
