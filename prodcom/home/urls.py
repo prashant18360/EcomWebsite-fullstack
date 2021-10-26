@@ -14,6 +14,17 @@ urlpatterns = [
     path('sellerapprove', views.sellerapprove, name='sellerapprove'),
     path('sellerreject', views.sellerreject, name='sellerreject'),
 
+    path('addproduct', views.addproduct, name='addproduct'),
+
     path('<str:username>', views.profile, name="profile"),
+    path('<str:username>/allapplication', views.allapplication, name="allapplication"),
+    path('<str:username>/allseller', views.allseller, name="allseller"),
+    path('<str:username>/allbuyer', views.allbuyer, name="allbuyer"),
+    path('<str:username>/allproduct', views.allproduct, name="allproduct"),
+
+    path('<str:username>/seller/remove', views.sellerremove, name="sellerremove"),
+    path('<str:username>/buyer/remove', views.buyerremove, name="buyerremove"),
+    path('<str:username>/product/remove', views.productremove, name="productremove"),
+    
 
 ]

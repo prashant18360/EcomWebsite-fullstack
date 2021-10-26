@@ -37,11 +37,34 @@ def profilepageData(accountobj):
     context['email'] = accountobj.user.email
     context['contact'] = accountobj.contactnum
     context['address'] = accountobj.address
+    context['role'] = accountobj.role
 
     return context
 
 
-def AdminConsole():
+def AdminConsoleApplication(): 
     application = ApplyForSeller.objects.filter(status="pending")
 
     return {"application" : application}
+
+
+
+def AdminConsoleSeller(): 
+    sellerlist = Account.objects.filter(role='seller')
+
+    return {"sellerlist" : sellerlist}
+
+
+def AdminConsoleBuyer(): 
+    buyerlist = Account.objects.filter(role='buyer')
+
+    return {"buyerlist" : buyerlist}
+
+
+
+def AdminConsoleProduct(): 
+    productlist = Productitem.objects.all()
+
+    return {"productlist" : productlist}
+
+

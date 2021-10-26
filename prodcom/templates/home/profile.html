@@ -17,31 +17,50 @@
 
     {% if user.is_superuser %}
 
-        {% for obj in application %}
-            {{obj.account.user.username}} {{obj.status}} <a href="/media/{{obj.document}}">Document</a>
-            <form action="/sellerapprove" method='post'> {% csrf_token %}
-              <input type="hidden" name="id" value={{obj.id}}>
-            <button type="submit" class="btn btn-success">Approve</button>
+          <form action="/{{user.username}}/allapplication" method='post'> {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Application list to become seller</button>
           </form>
-            <form action="/sellerreject" method='post'> {% csrf_token %}
-              <input type="hidden" name="id" value={{obj.id}}>
-            <button type="submit" class="btn btn-danger">Reject</button>
+          
+          <form action="/{{user.username}}/allseller" method='post'> {% csrf_token %}
+            <button type="submit" class="btn btn-secondary">List of Seller</button>
           </form>
-            </br>
+          
+          <form action="/{{user.username}}/allbuyer" method='post'> {% csrf_token %}
+            <button type="submit" class="btn btn-success">List of buyer</button>
+          </form>
+          
+          <form action="/{{user.username}}/allproduct" method='post'> {% csrf_token %}
+            <button type="submit" class="btn btn-info">List of Products</button>
+          </form>
 
-            
-        {% endfor %}
+
+        
 
     {% else %}
 
         {{username}} {{fullname}} {{email}} {{contact}} {{address}}
 
+        {% if role == 'buyer' %}
+
         <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#applysellerformModal">
             Become a seller</button>
+
+        {% elif role == 'seller' %}
+          <p>You are a Seller you can add product items for sale</p>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#addproductformModal">
+          Add product items</button>
+
+        {% endif %}
     
     {% endif %}
 
     
+
+
+
+
+
+
     
   <!-- applysellerform Modal -->
 <div class="modal fade" id="applysellerformModal" tabindex="-1" aria-labelledby="applysellerformModal" aria-hidden="true">
@@ -77,6 +96,71 @@
   
   
   
+
+
+
+<!-- Add product form Modal -->
+<div class="modal fade" id="addproductformModal" tabindex="-1" aria-labelledby="addproductformModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addproductformModalTitle">Apply Here</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          
+        <form action= "/addproduct" method='post' enctype="multipart/form-data">  {% csrf_token %}
+
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Product Name" required>
+            
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" id="description" name="description" placeholder="Description" required>
+          </div>
+          <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Quantity" required>
+          </div>
+          <div class="form-group">
+            <label for="price">Price (in INR)</label>
+            <input type="number" step='0.01' class="form-control" id="price" name="price" placeholder="Price" required>
+          <!--  <input type='number' step='0.01' value='0.00' placeholder='0.00' /> -->
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" class="form-control" id="category" name="category" placeholder="Category" required>
+             
+          </div>
+          <div class="form-group">
+            <label for="image1">1st Image</label>
+            <input id="image1" name="image1" type="file" accept="image/jpeg" /> 
+          </div>
+
+          <div class="form-group">
+            <label for="image2">2nd Image</label>
+            <input id="image2" name="image2" type="file" accept="image/jpeg" /> 
+          </div>
+  
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
 
     
 </body>

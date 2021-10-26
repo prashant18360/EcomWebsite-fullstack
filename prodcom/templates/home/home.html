@@ -9,11 +9,129 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     <title>prodcom</title>
+
+
+<style>body {
+  background: #eee
+}
+
+.ratings i {
+  font-size: 16px;
+  color: red
+}
+
+.strike-text {
+  color: red;
+  text-decoration: line-through
+}
+
+.product-image {
+  width: 100%
+}
+
+.dot {
+  height: 7px;
+  width: 7px;
+  margin-left: 6px;
+  margin-right: 6px;
+  margin-top: 3px;
+  background-color: blue;
+  border-radius: 50%;
+  display: inline-block
+}
+
+.spec-1 {
+  color: #938787;
+  font-size: 15px
+}
+
+h5 {
+  font-weight: 400
+}
+
+.para {
+  font-size: 16px
+}</style>
   </head>
   
  
     {% include 'navbar.html' %}
-<h1>FCS Project</h1>
+
+
+
+    <body oncontextmenu='return false' class='snippet-body'>
+      <div class="container mt-5 mb-5">
+      <div class="d-flex justify-content-center row">
+          <div class="col-md-10">
+
+            {% for product in productlist %}
+              
+            <div class="row p-2 bg-white border rounded">
+                  <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image" src="{{product.image1}}"></div>
+                  <div class="col-md-6 mt-1">
+                      <h5><b>{{product.name}}</b></h5>
+                      <p class="text-justify text-truncate para mb-0">{{product.description}}:-<br><br></p>
+                  </div>
+                  <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                      <div class="d-flex flex-row align-items-center">
+                          <h4 class="mr-1">₹ {{product.price}}</h4>
+                      </div>
+                      <div class="d-flex flex-column mt-4"><button class="btn btn-primary btn-sm" type="button">View Product</button></div>
+                  </div>
+              </div>
+
+              {% endfor %}
+              <!--
+              <div class="row p-2 bg-white border rounded mt-2">
+                  <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image" src="jeans.jpg"></div>
+                  <div class="col-md-6 mt-1">
+                      <h5><b>Jeans</b></h5>
+                      <p class="text-justify text-truncate para mb-0">Here comes the description of the product:-<br><br></p>
+                  </div>
+                  <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                      <div class="d-flex flex-row align-items-center">
+                          <h4 class="mr-1">₹2999</h4>
+                      </div>
+                      <div class="d-flex flex-column mt-4"><button class="btn btn-primary btn-sm" type="button">View Product</button></div>
+                  </div>
+              </div>
+
+              <div class="row p-2 bg-white border rounded mt-2">
+                  <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image" src="laptop.jpg"></div>
+                  <div class="col-md-6 mt-1">
+                      <h5><b>Laptop</b></h5>
+                      <p class="text-justify text-truncate para mb-0">Here comes the description of the product:-<br><br></p>
+                  </div>
+                  <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                      <div class="d-flex flex-row align-items-center">
+                          <h4 class="mr-1">₹69,000</h4>
+                      </div>
+                      <div class="d-flex flex-column mt-4"><button class="btn btn-primary btn-sm" type="button">View Product</button></div>
+                  </div>
+              </div>
+
+              <div class="row p-2 bg-white border rounded mt-2">
+                  <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image" src="book.jpg"></div>
+                  <div class="col-md-6 mt-1">
+                      <h5><b>Books</b></h5>
+                      <p class="text-justify text-truncate para mb-0">Here comes the description of the product:-<br><br></p>
+                  </div>
+                  <div class="align-items-center align-content-center col-md-3 border-left mt-1">
+                      <div class="d-flex flex-row align-items-center">
+                          <h4 class="mr-1">₹3999</h4>
+                      </div>
+                      <div class="d-flex flex-column mt-4"><button class="btn btn-primary btn-sm" type="button">View Product</button></div>
+                  </div>
+              </div> -->
+
+          </div>
+      </div>
+  </div>
+  
+  <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js'></script>
+  <script type='text/javascript'></script>
+  
+  </body>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

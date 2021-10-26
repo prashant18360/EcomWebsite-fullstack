@@ -7,8 +7,19 @@ from home.models import *
 
 # Create your views here.
 def home(request):
-    return render(request, 'home/home.html')
-    #return HttpResponse("This is home")
+    productlist = []
+    for obj in Productitem.objects.all()[:10]:
+        dt = {}
+        dt['name'] = obj.name
+        dt['description'] = obj.description
+        dt['quantity'] = obj.quantity
+        dt['price'] = obj.price
+        dt['image2'] = obj.image2.url
+        dt['image1'] = obj.image1.url
+        productlist.append(dt)
+    
+    return render(request, 'home/home.html', {'productlist' : productlist})
+
 
 def signupprocess(request):
     if request.method=="POST":
@@ -103,8 +114,8 @@ def profile(request, username):
         return HttpResponse("404 - Page Not found")
 
     if loggeduser.is_superuser:
-        context = AdminConsole()
-        return render(request, 'home/profile.html', context) 
+        
+        return render(request, 'home/profile.html') 
 
 
     try:
@@ -119,7 +130,6 @@ def profile(request, username):
         return HttpResponse("404 - Page Not found")
     
 
-
 def applyforseller(request):
     if request.method == 'POST':
         loguser = request.user
@@ -133,38 +143,207 @@ def applyforseller(request):
 
         if ApplyForSeller.objects.filter(account=account).exists():
             messages.warning(request, "You have already Submitted Application")
-            return redirect('home')
         else:
             ApplyForSeller.objects.create(account=account, document=document)
+            messages.success(request, "Application Successfully Submitted")
+        return redirect("profile", username=loguser.username)
 
-        messages.success(request, "Application Successfully Submitted")
-        return redirect('home')
+        
     else:
         return HttpResponse("404 - page not found")
 
 
+def allapplication(request, username):
+    if request.method == 'POST':
+        loguser = request.user
+        if loguser.is_superuser and username == loguser.username:
+            context = AdminConsoleApplication()
+            return render(request, 'home/admin/allapplication.html', context) 
+        else:
+            return HttpResponse("404 - Not found")
+    else:
+        return HttpResponse("404 - Not found")
+
+
 def sellerapprove(request):
     if request.method == 'POST':
-        id = request.POST['id']
-        obj = ApplyForSeller.objects.filter(id=id).first()
-        obj.status = "approved"
-        obj.account.role = "seller"
-        obj.account.save()
-        obj.save()
+        loguser = request.user
+        if loguser.is_superuser:
+            id = request.POST['id'] if 'id' in request.POST else ''
 
-        messages.success(request, "Seller Application Approved")
-        return redirect('home')
+            if id == '':
+                return HttpResponse("Something Went Wrong")
+
+
+            obj = ApplyForSeller.objects.filter(id=id).first()
+            obj.status = "approved"
+            obj.account.role = "seller"
+            obj.account.save()
+            obj.save()
+
+            messages.success(request, "Seller Application Approved")
+            return redirect("profile", username=loguser.username)
+        else:
+            return HttpResponse("404 - page not found")
 
     else:
         return HttpResponse("404 - page not found")
 
 def sellerreject(request):
     if request.method == 'POST':
-        id = request.POST['id']
-        obj = ApplyForSeller.objects.filter(id=id).first().delete()
+        loguser = request.user
+        if loguser.is_superuser:
+            id = request.POST['id'] if 'id' in request.POST else ''
+            if id == '':
+                return HttpResponse("Something Went Wrong")
 
-        messages.success(request, "Seller Application Reject")
-        return redirect('home')
+            obj = ApplyForSeller.objects.filter(id=id).first().delete()
+
+            messages.success(request, "Seller Application Reject")
+            return redirect("profile", username=loguser.username)
+        else:
+            return HttpResponse("404 - page not found")
     else:
         return HttpResponse("404 - page not found")
+
+
+def allseller(request, username):
+    if request.method == 'POST':
+        loguser = request.user
+        if loguser.is_superuser and username == loguser.username:
+            context = AdminConsoleSeller()
+            return render(request, 'home/admin/allseller.html', context) 
+        else:
+            return HttpResponse("404 - Not found")
+    else:
+        return HttpResponse("404 - Not found")
+
+def allbuyer(request, username):
+    if request.method == 'POST':
+        loguser = request.user
+        if loguser.is_superuser and username == loguser.username:
+            context = AdminConsoleBuyer()
+            return render(request, 'home/admin/allbuyer.html', context) 
+        else:
+            return HttpResponse("404 - Not found")
+    else:
+        return HttpResponse("404 - Not found")
+
+def allproduct(request, username):
+    if request.method == 'POST':
+        loguser = request.user
+        if loguser.is_superuser and username == loguser.username:
+            context = AdminConsoleProduct()
+            return render(request, 'home/admin/allproduct.html', context) 
+        else:
+            return HttpResponse("404 - Not found")
+    else:
+        return HttpResponse("404 - Not found")
+
+
+def addproduct(request):
+    if request.method == 'POST':
+        name = request.POST['name'] if 'name' in request.POST else ''
+        description = request.POST['description'] if 'description' in request.POST else ''
+        quantity = request.POST['quantity'] if 'quantity' in request.POST else ''
+        price = request.POST['price'] if 'price' in request.POST else ''
+        category = request.POST['category'] if 'category' in request.POST else ''
+        image1 = request.FILES['image1'] if 'image1' in request.FILES else '' 
+        image2 = request.FILES['image2'] if 'image2' in request.FILES else ''
+
+        if name == '' or description == '' or quantity == '' or price == '' or category == '' or image1 == '' or image2 == '':
+            return HttpResponse("Something Went Wrong")
+        
+        loguser = request.user
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+        else:
+            accountobj = Account.objects.filter(user=loguser).first()
+            if accountobj.role == 'seller':
+                Productitem.objects.create(seller=accountobj, name=name, description=description, quantity=quantity, price=price, category=category, image1=image1, image2=image2)
+
+                messages.success(request, "Product Item Added Successfully")
+                return redirect("profile", username=loguser.username)
+            else:
+                return HttpResponse("404 - Not found")
+
+    else:
+        return HttpResponse("404 - Not found")
+
+
+def sellerremove(request, username):
+    if request.method == 'POST':
+        loguser = request.user
+        if loguser.is_superuser and loguser.username == username:
+            id = request.POST['id'] if 'id' in request.POST else ''
+            if id == '':
+                return HttpResponse("Something Went Wrong")
+            
+            accountobj = Account.objects.filter(id=id).first()
+            if accountobj and accountobj.role == 'seller':
+                Productitem.objects.filter(seller=accountobj).delete()
+                
+                accountobj.role = 'buyer'
+                accountobj.save()
+
+                messages.success(request, "Seller Removed")
+                return redirect("profile", username=loguser.username)
+            else:
+                return HttpResponse("Something Went Wrong")
+
+        else:
+            return HttpResponse("404 - Not found")
+    else:
+        return HttpResponse("404 - Not found")
+
+
+
+def buyerremove(request, username):
+    if request.method == 'POST':
+        loguser = request.user
+        if loguser.is_superuser and loguser.username == username:
+            id = request.POST['id'] if 'id' in request.POST else ''
+            if id == '':
+                return HttpResponse("Something Went Wrong")
+            
+            accountobj = Account.objects.filter(id=id).first()
+            if accountobj and accountobj.role == 'buyer':
+                userobj = User.objects.filter(username=accountobj.user.username).first()
+
+                userobj.delete()
+                messages.success(request, "Buyer Removed")
+                return redirect("profile", username=loguser.username)
+
+            else:
+                return HttpResponse("Something Went Wrong")
+        else:
+            return HttpResponse("404 - Not found")
+    else:
+        return HttpResponse("404 - Not found")
+
+
+
+def productremove(request, username):
+    if request.method == 'POST':
+        loguser = request.user
+        if loguser.is_superuser and loguser.username == username:
+            id = request.POST['id'] if 'id' in request.POST else ''
+            if id == '':
+                #print("First")
+                return HttpResponse("Something Went Wrong")
+            
+            prodobj = Productitem.objects.filter(id=id).first()
+            if prodobj:
+                prodobj.delete()
+
+                messages.success(request, "Product Removed")
+                return redirect("profile", username=loguser.username)
+            else:
+                #print("Second")
+                return HttpResponse("Something Went Wrong")
+        else:
+            return HttpResponse("404 - Not found")
+    else:
+        return HttpResponse("404 - Not found")
+
 
