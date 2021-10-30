@@ -31,6 +31,26 @@ def validateusername(username):
         return True
 
 
+
+def productpageData(productobj):
+    dt = {}
+    dt['id'] = productobj.id
+    dt['name'] = productobj.name
+    dt['description'] = productobj.description
+    dt['category'] = productobj.category
+    dt['stockquantity'] = productobj.quantity
+    dt['price'] = productobj.price
+    dt['image1'] = productobj.image1.url
+    dt['image2'] = productobj.image2.url
+    dt['seller'] = {'id' : productobj.seller.id, 'name' : productobj.seller.user.first_name + " " + productobj.seller.user.last_name}
+    #print(dt)
+    return dt
+    
+    
+   
+
+
+
 def profilepageData(accountobj):
     context = {'username' : accountobj.user.username}
     context['fullname'] = accountobj.user.first_name + " " + accountobj.user.last_name

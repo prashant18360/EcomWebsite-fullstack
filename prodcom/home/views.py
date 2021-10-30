@@ -10,6 +10,7 @@ def home(request):
     productlist = []
     for obj in Productitem.objects.all()[:10]:
         dt = {}
+        dt['id'] = obj.id
         dt['name'] = obj.name
         dt['description'] = obj.description
         dt['quantity'] = obj.quantity
@@ -103,6 +104,20 @@ def logoutprocess(request):
     logout(request)
     messages.success(request, "Successfully logged out")
     return redirect('home')
+
+
+def product(request, id, name):
+
+    prodobj = Productitem.objects.filter(id=id).first()
+    if prodobj:
+        product = productpageData(prodobj)
+        context = {'product' : product}
+        return render(request, 'home/product.html', context)
+    else:
+        return HttpResponse("404 - Page Not found")
+    
+
+
 
 def profile(request, username):
 
