@@ -58,6 +58,11 @@ h5 {
     {% include 'navbar.html' %}
 
 
+    {% if user.is_authenticated %}
+        <form action= "/cart/" method='POST'>  {% csrf_token %}
+            <button type="submit" class="btn btn-primary">My Cart</button>
+        </form>
+    {% endif %}
 
     <body oncontextmenu='return false' class='snippet-body'>
       <div class="container mt-5 mb-5">

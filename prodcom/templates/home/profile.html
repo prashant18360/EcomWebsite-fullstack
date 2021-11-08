@@ -45,10 +45,17 @@
         <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#applysellerformModal">
             Become a seller</button>
 
+        
+
         {% elif role == 'seller' %}
           <p>You are a Seller you can add product items for sale</p>
         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#addproductformModal">
           Add product items</button>
+
+          
+          <a type="button" href="/seller/catalog" class="btn btn-outline-primary">View Seller Catalog</a>
+
+
 
         {% endif %}
     
@@ -104,7 +111,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addproductformModalTitle">Apply Here</h5>
+        <h5 class="modal-title" id="addproductformModalTitle">Add Product</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -129,7 +136,7 @@
           <div class="form-group">
             <label for="price">Price (in INR)</label>
             <input type="number" step='0.01' class="form-control" id="price" name="price" placeholder="Price" required>
-          <!--  <input type='number' step='0.01' value='0.00' placeholder='0.00' /> -->
+          
           </div>
           <div class="form-group">
             <label for="category">Category</label>

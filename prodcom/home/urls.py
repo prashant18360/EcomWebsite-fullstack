@@ -14,7 +14,12 @@ urlpatterns = [
     path('sellerapprove', views.sellerapprove, name='sellerapprove'),
     path('sellerreject', views.sellerreject, name='sellerreject'),
 
-    path('addproduct', views.addproduct, name='addproduct'),
+    path('addproduct', views.addproduct, name='addproduct'), 
+
+    path('seller/catalog', views.sellercatalog, name='sellercatalog'),
+    path('seller/productedit/page', views.sellereditproductpage, name='sellereditproductpage'), 
+    path('seller/product/edit', views.sellereditproduct, name='sellereditproduct'), 
+    path('seller/product/remove', views.sellerremoveproduct, name='sellerremoveproduct'),
 
     path('product/<str:id>/<str:name>', views.product, name='product'),
 

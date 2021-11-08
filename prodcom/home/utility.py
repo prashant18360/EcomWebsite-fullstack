@@ -60,6 +60,7 @@ def profilepageData(accountobj):
     context['address'] = accountobj.address
     context['role'] = accountobj.role
 
+
     return context
 
 

@@ -215,7 +215,9 @@ hr {
             <div class="card">
 
                 {% if user.is_authenticated %}
-                <button type="submit" class="btn btn-primary">My Cart</button>
+                <form action= "/cart/" method='POST'>  {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">My Cart</button>
+                </form>
                 {% endif %}
 
             <i style="position: relative;left:95%;cursor: pointer;" class="fa fa-shopping-cart fa-2x" aria-hidden="true"></i>

@@ -129,7 +129,6 @@ def profile(request, username):
         return HttpResponse("404 - Page Not found")
 
     if loggeduser.is_superuser:
-        
         return render(request, 'home/profile.html') 
 
 
@@ -344,7 +343,7 @@ def productremove(request, username):
         if loguser.is_superuser and loguser.username == username:
             id = request.POST['id'] if 'id' in request.POST else ''
             if id == '':
-                #print("First")
+                
                 return HttpResponse("Something Went Wrong")
             
             prodobj = Productitem.objects.filter(id=id).first()
@@ -361,4 +360,122 @@ def productremove(request, username):
     else:
         return HttpResponse("404 - Not found")
 
+
+
+def sellercatalog(request):
+    loguser = request.user
+
+    if loguser.is_anonymous:
+        return HttpResponse("404 - Not found")
+    
+    account = Account.objects.filter(user=loguser).first()
+    if account and account.role == 'seller':
+        productlist = []
+        allprodobj = Productitem.objects.filter(seller=account)
+        for prod in allprodobj:
+            dt={}
+            dt['id'] = prod.id
+            dt['name'] = prod.name
+            dt['quantity'] = prod.quantity
+            dt['price'] = prod.price
+
+            productlist.append(dt)
+        
+        return render(request, 'home/sellercatalog.html', {'productlist' : productlist})
+    else:
+        return HttpResponse("Something went wrong")
+
+
+
+def sellereditproductpage(request):
+    if request.method == 'POST':
+        loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
+        id = request.POST['id'] if 'id' in request.POST else ''
+        if id == '':
+            return HttpResponse("Something Went Wrong")
+        prodobj = Productitem.objects.filter(id=id).first()
+
+        if prodobj:
+            if loguser == prodobj.seller.user:
+                return render(request, 'home/selleredit.html', {'product' : prodobj})
+            else:
+                return HttpResponse("404 - Not found")
+        else:    
+            return HttpResponse("Something Went Wrong")
+
+
+    else:
+        return HttpResponse("404 - Not found")
+
+
+
+
+def sellereditproduct(request):
+    if request.method == 'POST':
+        loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
+        id = request.POST['id'] if 'id' in request.POST else ''
+        name = request.POST['name'] if 'name' in request.POST else ''
+        description = request.POST['description'] if 'description' in request.POST else ''
+        quantity = request.POST['quantity'] if 'quantity' in request.POST else ''
+        price = request.POST['price'] if 'price' in request.POST else ''
+        category = request.POST['category'] if 'category' in request.POST else ''
+
+        if id == '' or name == '' or description == '' or quantity == '' or price == '' or category == '':
+            return HttpResponse("Something Went Wrong")
+        prodobj = Productitem.objects.filter(id=id).first()
+        
+        if prodobj:
+            if loguser == prodobj.seller.user:
+                
+                prodobj.name = name
+                prodobj.description = description
+                prodobj.quantity = quantity
+                prodobj.price = price
+                prodobj.category = category
+                prodobj.save()
+
+                messages.success(request, "Product Updated")
+                return redirect("profile", username=loguser.username)
+            else:
+                return HttpResponse("404 - Not found")
+        else:    
+            return HttpResponse("Something Went Wrong")
+    else:
+        return HttpResponse("404 - Not found")
+    
+    
+    
+
+def sellerremoveproduct(request):
+    if request.method == 'POST':
+        loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
+        id = request.POST['id'] if 'id' in request.POST else ''
+        if id == '':
+            return HttpResponse("Something Went Wrong")
+        prodobj = Productitem.objects.filter(id=id).first()
+        
+        if prodobj:
+            if loguser == prodobj.seller.user:
+                prodobj.delete()
+
+                messages.success(request, "Product Removed")
+                return redirect("profile", username=loguser.username)
+            else:
+                return HttpResponse("404 - Not found")
+        else:    
+            return HttpResponse("Something Went Wrong")
+    else:
+        return HttpResponse("404 - Not found")
 
