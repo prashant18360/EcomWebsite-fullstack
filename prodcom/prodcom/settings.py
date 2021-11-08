@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home.apps.HomeConfig',
+    'cart.apps.CartConfig',
     
 ]
 
@@ -122,6 +123,7 @@ MESSAGE_TAGS = {
     messages.ERROR:'danger'
 }
 
+CART_SESSION_ID = 'cart'
 
 
 #managing media files 
