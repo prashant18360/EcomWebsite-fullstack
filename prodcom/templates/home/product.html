@@ -213,7 +213,12 @@ hr {
 
         <div class="col-md-7">
             <div class="card">
-              <i style="position: relative;left:95%;cursor: pointer;" class="fa fa-shopping-cart fa-2x" aria-hidden="true"></i>
+
+                {% if user.is_authenticated %}
+                <button type="submit" class="btn btn-primary">My Cart</button>
+                {% endif %}
+
+            <i style="position: relative;left:95%;cursor: pointer;" class="fa fa-shopping-cart fa-2x" aria-hidden="true"></i>
                 <div class="about"> <span class="font-weight-bold">{{product.name}} </span>
                     <h4 class="font-weight-bold">₹ {{product.price}}</h4>
                 </div>
@@ -229,8 +234,8 @@ hr {
                 
                 {% endif %}
                 
-                
-            <!--    <div class="buttons"></div><button class="btn btn-warning btn-long buy">Buy it Now</button></div> -->
+                {{product.productlink}}
+                <div class="buttons"></div><button class="btn btn-warning btn-long buy">Share Product link</button></div>
                 
 
                 <hr>
@@ -239,7 +244,7 @@ hr {
                     <div class="mt-2"> <span class="font-weight-bold">Description</span>
                         <p>{{product.description}}</p>
                         
-                       
+                        
 
                     </div>
                     <div class="mt-2"> <span class="font-weight-bold">Seller</span> </div>

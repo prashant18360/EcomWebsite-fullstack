@@ -43,7 +43,8 @@ def productpageData(productobj):
     dt['image1'] = productobj.image1.url
     dt['image2'] = productobj.image2.url
     dt['seller'] = {'id' : productobj.seller.id, 'name' : productobj.seller.user.first_name + " " + productobj.seller.user.last_name}
-    #print(dt)
+    dt['productlink'] = "http://127.0.0.1:8000/product/" + str(dt['id']) + "/" + dt['name']
+
     return dt
     
     
