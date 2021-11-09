@@ -10,6 +10,8 @@ urlpatterns = [
     path('login', views.loginprocess, name='login'),
     path('logout', views.logoutprocess, name='logout'),
 
+    path('otpverify/email', views.otpverifyemail, name='otpverifyemail'),
+
     path('applyforseller', views.applyforseller, name='applyforseller'),
     path('sellerapprove', views.sellerapprove, name='sellerapprove'),
     path('sellerreject', views.sellerreject, name='sellerreject'),

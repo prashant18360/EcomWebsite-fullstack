@@ -2,15 +2,28 @@ from decimal import Decimal
 from django.conf import settings
 from home.models import *
 from cart.models import *
+import re
+import random
+import string
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 def add(customer, product):
     cartitem = shopcart.objects.filter(customer=customer, product=product).first()
     if cartitem:
-        cartitem.quantity = cartitem.quantity + 1
-        cartitem.save()
+        if product.quantity - cartitem.quantity - 1 >= 0:
+            cartitem.quantity = cartitem.quantity + 1
+            cartitem.save()
+            return 1
+        else:
+            return 0
     else:
-        shopcart.objects.create(customer=customer, product=product, quantity=1)
+        if product.quantity - 1 >= 0:
+            shopcart.objects.create(customer=customer, product=product, quantity=1)
+            return 1
+        else:
+            return 0
 
 def remove(customer, product):
     
@@ -44,6 +57,74 @@ def CartShow(customer):
             cartitemlist.append(dt)
     
     return cartitemlist, carttotalcost
+
+
+
+
+def getPaymentOTP():
+    return(random.randint(10000000, 99999999))
+
+def getPaymentNumCode():
+    code = ''.join(random.choices(string.ascii_lowercase + string.digits, k = 8))
+    while Paymentotp.objects.filter(numcode__exact=code).exists():
+        code = ''.join(random.choices(string.ascii_lowercase + string.digits, k = 8))
+    return code
+
+
+
+def sentpaymentotp(otp, amount, email, fname):
+    OTPmessage = f"Hi {fname},\n Your 8 digit OTP is {otp} for payment ₹ {amount} .\n This OTP is valid for only 10 Minutes.  \n\n Thanks"
+                
+    send_mail("FCSproject Payment OTP", 
+            OTPmessage, 
+            settings.EMAIL_HOST_USER, 
+            [email], 
+            fail_silently = False)
+
+
+
+
+def OrderPlaced(customer):
+    cart = shopcart.objects.filter(customer=customer)
+    
+    orderitemlist = []
+    ordertotalcost = 0
+    
+    if cart:
+        for cartitem in cart:
+            placedorder.objects.create(customer=customer, product=cartitem.product, quantity=cartitem.quantity)
+            
+            if CheckproductQuantity(cartitem.product.id, cartitem.quantity):
+                
+                dt = {}
+                dt['productname'] = cartitem.product.name
+                dt['productimage'] = cartitem.product.image1.url
+                dt['quantity'] = cartitem.quantity
+                dt['productcost'] = cartitem.product.price
+                dt['producttotalcost'] = cartitem.quantity*(cartitem.product.price)
+            
+                ordertotalcost += dt['producttotalcost']
+                orderitemlist.append(dt)
+
+            else:
+                return [], -1
+        
+        shopcart.objects.filter(customer=customer).delete()
+
+    return orderitemlist, ordertotalcost
+    
+
+
+def CheckproductQuantity(productid, qty):
+    productitemobj = Productitem.objects.filter(id=productid).first()
+
+    if productitemobj.quantity - qty >= 0:
+        productitemobj.quantity = productitemobj.quantity - qty
+        productitemobj.save()
+        return True
+    else:
+        return False
+
 
 
 '''

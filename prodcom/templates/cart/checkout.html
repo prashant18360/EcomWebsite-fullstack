@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>Cart - Checkout</title>
+  </head>
+
+<body>
+{% include 'navbar.html' %}
+
+<h1>FCS Project Payment Gateway</h1>
+<h1>You are paying ₹ {{totalcost}}.</h1>
+
+<form action= "/cart/payment/carddetails/" method='post' >  {% csrf_token %}
+    
+    <h1>Enter your card details (Credit/Debit card)</h1>
+    <p>NOTE: This is a dummy payment Gateway, You can enter any fake, random card details. The OTP will be sent to your E-mail.</p>
+      
+    <div class="form-group">
+      <label for="cardnum">Card number</label>
+      <input type="text" class="form-control" id="cardnum" name="cardnum" placeholder="Enter 16-digit card number" maxlength="16" pattern="\d{16}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="cardnum">Card Expire Month & Year</label>
+        <input type="month" class="form-control" id="cardexpire" name="cardexpire" placeholder="Enter 16-digit card number" required>
+      </div>
+    
+      <div class="form-group">
+        <label for="cardcvv">CVV</label>
+        <input type="text" class="form-control" id="cardcvv" name="cardcvv" placeholder="Enter 3-digit card CVV" maxlength="3" pattern="\d{3}" required>
+      </div>
+    
+
+  <button type="submit" class="btn btn-primary">Make Payment</button>
+</form>
+        
+
+        
+
+
+</body>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</html>
+

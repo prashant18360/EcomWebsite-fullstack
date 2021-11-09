@@ -31,6 +31,7 @@
                 {% endwith %}
             </span>
         </h2> -->
+            <h2>My shopping Cart product list</h2>
             <table class="table table-striped table-hover">
                 <thead style="background-color: #5AC8FA">
                     <tr>
@@ -78,6 +79,11 @@
                 </tr>
                 </tbody>
             </table>
+
+            <form action="/cart/checkout/" method='post'> {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+            </form>
+
         <p class="text-right">
         
         </p>

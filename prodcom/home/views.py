@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth  import authenticate,  login, logout
 from django.contrib import messages
 from home.utility import *
+from home.helper import *
 from home.models import *
 
 # Create your views here.
@@ -62,16 +63,16 @@ def signupprocess(request):
         if not User.objects.filter(username=username).exists():
             if not User.objects.filter(email=email).exists():
                 
-                myuser = User.objects.create_user(username, email, pass1)
-                myuser.first_name = fname
-                myuser.last_name = lname
-                myuser.is_active = True
-                myuser.save()
+                
 
-                Account.objects.create(user=myuser)
+                otp = generateOTP()
+                numcode = generateNumCode()
+                Emailotp.objects.create(username=username, fname=fname, lname=lname, email=email, passw=pass1, otp = otp, numcode=numcode)
+                sendOTPEmail(otp, email)
+                
+                context = {'username' : username, 'fname' : fname, 'lname' : lname, 'email' : email, 'pass' : pass1, 'num' : numcode}
+                return render(request, 'home/emailotp.html', context)
 
-                messages.success(request, "Congrats !! Your Account has been successfully created, Now you can login to your account")
-                return redirect('home')
             else:
                 messages.error(request, "Email-id already used, Choose different email")
                 return redirect("home")
@@ -81,6 +82,76 @@ def signupprocess(request):
         
     else:
         return render(request, 'error/404.html')
+
+
+
+def otpverifyemail(request):
+    if request.method == 'POST':
+        
+        
+        input_otp = request.POST['otp'] if 'otp' in request.POST else ''
+        username = request.POST['username'] if 'username' in request.POST else ''
+        email = request.POST['email'] if 'email' in request.POST else ''
+        fname = request.POST['fname'] if 'fname' in request.POST else ''
+        lname = request.POST['lname'] if 'lname' in request.POST else ''
+        password = request.POST['pass'] if 'pass' in request.POST else ''
+        code = request.POST['num'] if 'num' in request.POST else ''
+
+        
+        if input_otp == '' or username == '' or email == '' or fname == '' or lname == '' or password == '' or code == '':
+            return HttpResponse('403 - Something Went Wrong')
+        
+        else:
+            #print("Run")
+            if input_otp.isdigit():
+                inputotp = int(input_otp)
+
+                otp_object = Emailotp.objects.filter(username__exact=username, fname__exact=fname, lname__exact=lname, email__exact=email, passw__exact=password, numcode__exact=code).last()
+
+
+                otp_objectexist = True if otp_object else False   
+                #print(otp_object)
+                if otp_objectexist:
+
+                    if not otp_object.IsExpired():
+
+                        if inputotp == otp_object.otp:
+
+                            myuser = User.objects.create_user(username, email, password)
+                            myuser.first_name = fname
+                            myuser.last_name = lname
+                            myuser.is_active = True
+                            myuser.save()
+
+                            Account.objects.create(user=myuser)
+                            
+                            Emailotp.objects.filter(email__exact=email).delete()
+                            Emailotp.objects.filter(username__exact=username).delete()
+   
+                            messages.success(request, "Congrats !! Your Account has been successfully created, Now you can login to your account")
+                            return redirect('home')
+                            
+                        else:
+                            context = {'username' : username, 'email':email, 'fname':fname, 'lname' : lname, 'pass' : password, 'num' : code}
+                            messages.error(request, "You have entered the Wrong OTP !! Please Enter the correct otp ")
+                            return render(request, 'home/emailotp.html', context)
+                    else:
+                        context = {'username' : username, 'email':email, 'fname':fname, 'lname' : lname, 'pass' : password, 'num' : code}
+                        messages.error(request, "Your entered OTP is being Expired !!")
+                        return render(request, 'home/emailotp.html', context)
+                else:
+                    return HttpResponse('403 - Something Went Wrong')
+            else:
+                context = {'username' : username, 'email':email, 'fname':fname, 'lname' : lname, 'pass' : password, 'num' : code}
+                messages.error(request, "You have entered the Wrong OTP !! Please Enter the correct otp ")
+                return render(request, 'home/emailotp.html', context)
+
+    else:
+        return HttpResponse("404 - Not found")
+
+
+
+
 
 def loginprocess(request):
     if request.method=="POST":
