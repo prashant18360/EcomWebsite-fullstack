@@ -106,7 +106,7 @@ def otpverifyemail(request):
             if input_otp.isdigit():
                 inputotp = int(input_otp)
 
-                otp_object = Emailotp.objects.filter(username__exact=username, fname__exact=fname, lname__exact=lname, email__exact=email, passw__exact=password, numcode__exact=code).last()
+                otp_object = Emailotp.objects.filter(username=username, fname=fname, lname=lname, email=email, passw=password, numcode=code).last()
 
 
                 otp_objectexist = True if otp_object else False   
