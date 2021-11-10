@@ -343,6 +343,14 @@ def addproduct(request):
         if loguser.is_anonymous:
             return HttpResponse("404 - Not found")
         else:
+            if int(quantity) < 0:
+                messages.warning(request, "Product Quantity cannot be negative")
+                return redirect("profile", username=loguser.username)
+        
+            if float(price) < 0:
+                messages.warning(request, "Product price cannot be negative")
+                return redirect("profile", username=loguser.username)
+            
             accountobj = Account.objects.filter(user=loguser).first()
             if accountobj.role == 'seller':
                 Productitem.objects.create(seller=accountobj, name=name, description=description, quantity=quantity, price=price, category=category, image1=image1, image2=image2)
