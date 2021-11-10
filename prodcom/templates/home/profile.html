@@ -38,12 +38,18 @@
 
     {% else %}
 
-        {{username}} {{fullname}} {{email}} {{contact}} {{address}}
+      <p>Username : {{username}}</p> 
+      <p>FullName : {{fullname}}</p>
+      <p>E-mail : {{email}}</p>
+      <p>Address : {{address}}</p>
+        
 
         {% if role == 'buyer' %}
 
         <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#applysellerformModal">
             Become a seller</button>
+      
+
 
         
 
@@ -52,12 +58,19 @@
         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#addproductformModal">
           Add product items</button>
 
+
           
           <a type="button" href="/seller/catalog" class="btn btn-outline-primary">View Seller Catalog</a>
 
 
+          
+
 
         {% endif %}
+
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#editprofileformModal">
+          Edit Profile</button>
+
     
     {% endif %}
 
@@ -103,6 +116,59 @@
   
   
   
+
+
+
+<!-- Edit Profile form Modal -->
+<div class="modal fade" id="editprofileformModal" tabindex="-1" aria-labelledby="editprofileformModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editprofileformModalTitle">Edit Profile</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          
+        <form action= "/account/editprofile" method='post' enctype="multipart/form-data">  {% csrf_token %}
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" value={{username}} disabled>
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="text" class="form-control" id="email" name="email" value={{email}} disabled>
+          </div>
+
+          <div class="form-group">
+            <label for="fname">First Name</label>
+            <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" value={{fname}} required>
+          </div>
+
+          <div class="form-group">
+            <label for="lname">Last Name</label>
+            <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" value={{lname}} required>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" class="form-control" id="address" name="address" required placeholder="Address" value={{address}} >
+          </div>
+
+          
+  
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -162,10 +228,6 @@
     </div>
   </div>
 </div>
-
-
-
-
 
 
 

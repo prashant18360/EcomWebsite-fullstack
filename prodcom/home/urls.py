@@ -25,6 +25,8 @@ urlpatterns = [
     path('seller/product/edit', views.sellereditproduct, name='sellereditproduct'), 
     path('seller/product/remove', views.sellerremoveproduct, name='sellerremoveproduct'),
 
+    path('account/editprofile', views.accounteditprofile, name='accounteditprofile'),
+    
     path('product/<str:id>/<str:name>', views.product, name='product'),
 
     path('<str:username>', views.profile, name="profile"),

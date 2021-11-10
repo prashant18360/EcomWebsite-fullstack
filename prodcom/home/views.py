@@ -241,9 +241,44 @@ def profile(request, username):
         return HttpResponse("404 - Page Not found")
     
 
+
+def accounteditprofile(request):
+    if request.method == 'POST':
+        loguser = request.user
+
+        if loguser.is_anonymous or loguser.is_superuser:
+            return HttpResponse("404 - Not found")
+
+        fname = request.POST['fname'] if 'fname' in request.POST else ''
+        lname = request.POST['lname'] if 'lname' in request.POST else ''
+        address = request.POST['address'] if 'address' in request.POST else ''
+
+        if fname == '' or lname == '' or address == '':
+            return HttpResponse("Something went wrong")
+        
+        account = Account.objects.filter(user=loguser).first()
+
+        loguser.first_name = fname
+        loguser.last_name = lname
+        loguser.save()
+
+        account.address = address
+        account.save()
+
+
+        messages.success(request, "Profile Updated")
+        return redirect("profile", username=loguser.username)
+    else:
+        return HttpResponse("404 - page not found")
+
+
+
 def applyforseller(request):
     if request.method == 'POST':
         loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
 
         if 'userfile' in request.FILES:
             document = request.FILES['userfile']
@@ -267,6 +302,10 @@ def applyforseller(request):
 def allapplication(request, username):
     if request.method == 'POST':
         loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
         if loguser.is_superuser and username == loguser.username:
             context = AdminConsoleApplication()
             return render(request, 'home/admin/allapplication.html', context) 
@@ -279,6 +318,9 @@ def allapplication(request, username):
 def sellerapprove(request):
     if request.method == 'POST':
         loguser = request.user
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
         if loguser.is_superuser:
             id = request.POST['id'] if 'id' in request.POST else ''
 
@@ -303,6 +345,10 @@ def sellerapprove(request):
 def sellerreject(request):
     if request.method == 'POST':
         loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
         if loguser.is_superuser:
             id = request.POST['id'] if 'id' in request.POST else ''
             if id == '':
@@ -321,6 +367,10 @@ def sellerreject(request):
 def allseller(request, username):
     if request.method == 'POST':
         loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
         if loguser.is_superuser and username == loguser.username:
             context = AdminConsoleSeller()
             return render(request, 'home/admin/allseller.html', context) 
@@ -332,6 +382,10 @@ def allseller(request, username):
 def allbuyer(request, username):
     if request.method == 'POST':
         loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
         if loguser.is_superuser and username == loguser.username:
             context = AdminConsoleBuyer()
             return render(request, 'home/admin/allbuyer.html', context) 
@@ -343,6 +397,10 @@ def allbuyer(request, username):
 def allproduct(request, username):
     if request.method == 'POST':
         loguser = request.user
+
+        if loguser.is_anonymous:
+            return HttpResponse("404 - Not found")
+
         if loguser.is_superuser and username == loguser.username:
             context = AdminConsoleProduct()
             return render(request, 'home/admin/allproduct.html', context) 

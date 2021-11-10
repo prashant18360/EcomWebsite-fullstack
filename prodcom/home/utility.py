@@ -64,9 +64,10 @@ def ProductshowData(obj):
 
 def profilepageData(accountobj):
     context = {'username' : accountobj.user.username}
-    context['fullname'] = accountobj.user.first_name + " " + accountobj.user.last_name
+    context['fname'] = accountobj.user.first_name
+    context['lname'] = accountobj.user.last_name
     context['email'] = accountobj.user.email
-    context['contact'] = accountobj.contactnum
+    context['fullname'] = accountobj.user.first_name + " " + accountobj.user.last_name
     context['address'] = accountobj.address
     context['role'] = accountobj.role
 

@@ -8,7 +8,7 @@ class Account(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=15, default="buyer") #buyer/seller
     address = models.CharField(max_length=100)
-    contactnum = models.CharField(max_length=15)
+    
 
 class ApplyForSeller(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
