@@ -11,8 +11,18 @@
         </li>
         
       </ul>
-      <form method="get" action="/search"class="form-inline my-2 my-lg-0 mx-3">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query" id="query">
+
+      
+
+      <form  action="/search" method="post" class="form-inline my-2 my-lg-0 mx-3" id="searchform"> {% csrf_token %}
+        
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query" id="query" required>
+          
+          <select class="custom-select" id="searchby" name="searchby" form="searchform">
+            <option value="name">Product Name</option>
+            <option value="category">Product category</option>
+          </select>
+        
         <button class="btn btn-outline-success my-2 my-sm-0 " type="submit">Search</button>
       </form>
 

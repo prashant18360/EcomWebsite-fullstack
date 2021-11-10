@@ -48,7 +48,17 @@ def productpageData(productobj):
     return dt
     
     
-   
+def ProductshowData(obj):
+    dt = {}
+    dt['id'] = obj.id
+    dt['name'] = obj.name
+    dt['description'] = obj.description
+    dt['quantity'] = obj.quantity
+    dt['price'] = obj.price
+    dt['image2'] = obj.image2.url
+    dt['image1'] = obj.image1.url
+
+    return dt
 
 
 

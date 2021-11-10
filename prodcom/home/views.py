@@ -10,15 +10,8 @@ from home.models import *
 def home(request):
     productlist = []
     for obj in Productitem.objects.all()[:10]:
-        dt = {}
-        dt['id'] = obj.id
-        dt['name'] = obj.name
-        dt['description'] = obj.description
-        dt['quantity'] = obj.quantity
-        dt['price'] = obj.price
-        dt['image2'] = obj.image2.url
-        dt['image1'] = obj.image1.url
-        productlist.append(dt)
+        
+        productlist.append(ProductshowData(obj))
     
     return render(request, 'home/home.html', {'productlist' : productlist})
 
@@ -62,8 +55,6 @@ def signupprocess(request):
         # check for unique username
         if not User.objects.filter(username=username).exists():
             if not User.objects.filter(email=email).exists():
-                
-                
 
                 otp = generateOTP()
                 numcode = generateNumCode()
@@ -156,8 +147,11 @@ def otpverifyemail(request):
 def loginprocess(request):
     if request.method=="POST":
         # Get the post parameters
-        loginusername=request.POST['loginusername']
-        loginpassword=request.POST['loginpass']
+        loginusername=request.POST['loginusername'] if 'loginusername' in request.POST else ''
+        loginpassword=request.POST['loginpass'] if 'loginpass' in request.POST else ''
+
+        if loginusername == '' or loginpassword == '':
+            return HttpResponse("403 - Something Went Wrong")
 
         user=authenticate(username= loginusername, password= loginpassword)
         if user is not None:
@@ -167,8 +161,8 @@ def loginprocess(request):
         else:
             messages.error(request, "Invalid credentials! Please try again")
             return redirect("home")
-
-    return HttpResponse("404- Not found")
+    else:
+        return HttpResponse("404- Not found")
 
 
 def logoutprocess(request):
@@ -187,6 +181,38 @@ def product(request, id, name):
     else:
         return HttpResponse("404 - Page Not found")
     
+
+
+def search(request):
+    if request.method=="POST":
+       
+        query=request.POST['query'] if 'query' in request.POST else ''
+        searchby=request.POST['searchby'] if 'searchby' in request.POST else ''
+
+        if query == '' or searchby == '':
+            return HttpResponse("Something Went Wrong")
+        
+        #print(query)
+        #print(searchby)
+        productlist = []
+        
+        if searchby == 'name':
+            for obj in Productitem.objects.filter(name__icontains=query):
+                productlist.append(ProductshowData(obj))
+        elif searchby == 'category':
+            for obj in Productitem.objects.filter(category__icontains=query):
+                productlist.append(ProductshowData(obj))
+        else:
+            return HttpResponse("Something Went Wrong")
+        
+        if len(productlist) == 0:
+            messages.warning(request, "No Search result found for " + query +  " !!:")
+        else:
+            messages.success(request, "Your search query result for " + query +  " is listing below:")
+        return render(request, 'home/home.html', {'productlist' : productlist})
+        
+    else:
+        return HttpResponse("404- Not found")
 
 
 
@@ -338,11 +364,20 @@ def addproduct(request):
 
         if name == '' or description == '' or quantity == '' or price == '' or category == '' or image1 == '' or image2 == '':
             return HttpResponse("Something Went Wrong")
+            
         
         loguser = request.user
         if loguser.is_anonymous:
             return HttpResponse("404 - Not found")
         else:
+            if int(quantity) < 0:
+                messages.warning(request, "Product Quantity cannot be negative")
+                return redirect("profile", username=loguser.username)
+        
+            if float(price) < 0:
+                messages.warning(request, "Product price cannot be negative")
+                return redirect("profile", username=loguser.username)
+            
             accountobj = Account.objects.filter(user=loguser).first()
             if accountobj.role == 'seller':
                 Productitem.objects.create(seller=accountobj, name=name, description=description, quantity=quantity, price=price, category=category, image1=image1, image2=image2)
